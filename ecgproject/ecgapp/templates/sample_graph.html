@@ -1,0 +1,388 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+  <title>Real-Time ECG Graph Showcase | ECGenius</title>
+  <style>
+    /* Medical themed styling */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(45deg, #d1fbff, #ffdada);
+  color: #162e3f;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode styles */
+body.dark-mode {
+    background: linear-gradient(45deg, #094e54, #923c3c);
+  background-color: #afd1e8;
+  color: #f2f8f7;
+}
+
+/* Gradient Navbar */
+header {
+  background: linear-gradient(45deg, #00e3f8, #960000); /* Gradient background */
+  padding: 1rem 2rem;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+/* Dark Mode header */
+body.dark-mode header {
+  background: linear-gradient(45deg, #6effff, #ff3030); /* Gradient for dark mode */
+}
+
+/* Header Text */
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #f43f5e,
+    0 0 10px #f43f5e,
+    0 0 20px #f43f5e,
+    0 0 40px #f43f5e;
+  font-weight: 700;
+  margin: 0;
+}
+
+
+/* Video Grid Container */
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Responsive Grid */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Video Card Styling */
+.video-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(167, 3, 3, 0.174);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode for video card */
+body.dark-mode .video-card {
+  background-color: #00a897;
+  color: #f2f8f7;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Video Styling */
+video {
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Video Info Styling */
+.video-info {
+  padding: 1rem;
+}
+
+.video-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: #00a0c0;
+}
+
+/* Dark mode for video info */
+body.dark-mode .video-info h2 {
+  color: #90e0ef;
+}
+
+/* Default to light mode - black font color */
+.video-info p {
+  font-size: 0.95rem;
+  color: #000000; /* Black for light mode */
+}
+
+/* Dark mode - white font color */
+@media (prefers-color-scheme: light) {
+  .video-info p {
+    color: #781919; /* White for dark mode */
+  }
+}
+
+
+/* Gradient Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: linear-gradient(45deg, #006d77, #00f6f6); /* Gradient background */
+  color: #fff;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode footer */
+body.dark-mode footer {
+  background: linear-gradient(45deg, #00b3b3, #006d77);
+  color: #f2f8f7;
+}
+
+/* Dark mode button */
+#mode-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #006d77;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+#mode-toggle:hover {
+  background-color: #00b3b3;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+  }
+}
+
+
+.back-link {
+  display: block;
+  width: fit-content;
+  margin: 30px auto 10px auto; /* center horizontally & add spacing from footer */
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-link:hover {
+  background-color: #2563eb;
+  transform: scale(1.05);
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Real-Time ECG Graph Visuals</h1>
+  </header>
+
+  <!-- Dark/Light Mode Toggle Button -->
+<button id="mode-toggle">🌙</button>  
+
+
+  <div class="container">
+    <div class="video-grid">
+      
+      <!-- Video 1 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster1.png' %}">
+          <source src="{% static 'videos/My_Graph.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 1: Normal ECG (Age: 20+ Male)</h2>
+<p>
+  This ECG recording represents a normal heart activity session captured from a healthy adult individual aged over 20 years. The data was acquired using an Arduino UNO microcontroller connected to an AD8232 ECG sensor module, which is specifically designed for measuring cardiac electrical activity. The recording was conducted under resting conditions, ensuring minimal body movement or stress for accurate baseline analysis. This session serves as a reference for normal ECG patterns and will be useful for comparative analysis with abnormal or pathological ECG recordings.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Normal ECG</li>
+  <li><strong>Age Group:</strong> 20+ years</li>
+  <li><strong>Recording Condition:</strong> Resting state (minimal movement, no exertion)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Purpose:</strong> Baseline data for comparison with abnormal ECG sessions</li>
+  <li><strong>Signal Characteristics:</strong> Stable PQRST waveform indicating normal sinus rhythm</li>
+  <li><strong>Use Case:</strong> Can be used to train or test ECG anomaly detection models</li>
+</ul>
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster2.png' %}">
+          <source src="{% static 'videos/My_Father.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 2: Male ECG (Age: 60+)</h2>
+<p>
+  This ECG recording captures the cardiac electrical activity of a male individual aged over 60 years, recorded under resting conditions to ensure minimal interference from physical movement or stress. The session was conducted using an Arduino UNO microcontroller paired with an AD8232 ECG sensor module, which is well-suited for accurate and noise-free signal acquisition. This dataset provides valuable insight into typical ECG patterns observed in older adults and can serve as a baseline reference for detecting age-related cardiac anomalies.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Male ECG</li>
+  <li><strong>Age Group:</strong> 60+ years</li>
+  <li><strong>Recording Condition:</strong> Resting state (calm, no exertion)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Purpose:</strong> Capturing age-specific ECG data for analysis and comparison</li>
+  <li><strong>Signal Characteristics:</strong> Clear PQRST waveform typical of a resting elderly heart</li>
+  <li><strong>Use Case:</strong> Useful for training models to detect age-related cardiac conditions</li>
+</ul>
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster2.png' %}">
+          <source src="{% static 'videos/My_Sister.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 3: Female ECG (Age: 25+)</h2>
+<p>
+  This ECG recording was taken from a healthy adult female aged over 25 years under calm and resting conditions to ensure minimal interference and high signal accuracy. The session used an Arduino UNO microcontroller paired with an AD8232 ECG sensor module, which is designed for reliable bio-signal acquisition. The goal of this recording is to serve as a clean reference for normal female ECG data, which can be valuable for identifying gender-specific patterns or differences in heart activity. The clear PQRST waveforms obtained during this session provide a strong baseline for further comparative and diagnostic analysis.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Female ECG</li>
+  <li><strong>Age Group:</strong> 25+ years</li>
+  <li><strong>Recording Condition:</strong> Resting state (calm, no physical activity)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Purpose:</strong> Gender-specific baseline for comparison and analysis</li>
+  <li><strong>Signal Characteristics:</strong> Clean PQRST waveform showing normal sinus rhythm</li>
+  <li><strong>Use Case:</strong> Useful for training models or validating ECG detection algorithms with gender consideration</li>
+</ul>
+
+        </div>
+      </div>
+
+      <!-- Video 4 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster2.png' %}">
+          <source src="{% static 'videos/My_Mother.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 4: Female ECG (Age: 50+)</h2>
+<p>
+  This ECG recording represents the heart activity of a female individual aged over 50 years. The session was recorded under resting conditions using an Arduino UNO microcontroller and an AD8232 ECG sensor module, ensuring stable signal acquisition with minimal artifacts. As age and gender can influence ECG characteristics, this session provides valuable insight into typical ECG patterns in older female individuals. It can be used for comparative analysis, model training, and understanding age-related cardiac changes.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Female ECG</li>
+  <li><strong>Age Group:</strong> 50+ years</li>
+  <li><strong>Recording Condition:</strong> Resting state (minimal movement, no exertion)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Purpose:</strong> Understanding ECG patterns in older female individuals</li>
+  <li><strong>Signal Characteristics:</strong> Stable PQRST waveform, age-specific variations may be present</li>
+  <li><strong>Use Case:</strong> Useful for AI training, age-gender specific ECG pattern analysis, and health monitoring research</li>
+</ul>
+
+        </div>
+      </div>
+
+      <!-- Video 5 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster2.png' %}">
+          <source src="{% static 'videos/Abnormal Graph.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 5: Female Abnormal ECG (Age: 90+)</h2>
+<p>
+  This ECG recording was taken from a female patient aged over 90 years, providing critical insight into age-related cardiac anomalies. The data was collected using an Arduino UNO microcontroller paired with an AD8232 ECG sensor module, under resting conditions to ensure a stable baseline. The recorded ECG exhibits abnormal waveform patterns, which may indicate conditions such as arrhythmia, atrial fibrillation, or other cardiac irregularities commonly observed in elderly individuals. This session is a valuable resource for analyzing deviations from normal ECG signals and for developing and testing AI-based anomaly detection systems.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Abnormal ECG</li>
+  <li><strong>Gender:</strong> Female</li>
+  <li><strong>Age Group:</strong> 90+ years</li>
+  <li><strong>Recording Condition:</strong> Resting state (minimal movement)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Signal Characteristics:</strong> Irregular PQRST patterns suggesting possible arrhythmia or age-related cardiac abnormalities</li>
+  <li><strong>Use Case:</strong> Useful for training/testing models on abnormal ECG patterns, especially in geriatric cases</li>
+</ul>
+
+        </div>
+      </div>
+
+      <!-- Video 6 -->
+      <div class="video-card">
+        <video controls poster="{% static 'images/ecg_poster2.png' %}">
+          <source src="{% static 'videos/Bad signal from AD8232.mp4' %}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <h2>Session 6: Bad ECG Signal (Without Filtering)</h2>
+<p>
+  This ECG recording represents a session where the signal quality is poor due to the absence of any filtering or preprocessing. Captured using the Arduino UNO microcontroller and AD8232 ECG sensor module, the data was collected under resting conditions to isolate hardware or signal noise issues from movement artifacts. This session highlights the raw nature of ECG signals before any noise reduction, baseline correction, or smoothing is applied. It serves as a valuable example to demonstrate the importance of signal filtering techniques in biomedical signal processing.
+</p>
+<ul>
+  <li><strong>Session Type:</strong> Bad ECG Signal (Raw, Unfiltered)</li>
+  <li><strong>Recording Condition:</strong> Resting state (minimal movement, no exertion)</li>
+  <li><strong>Devices Used:</strong> Arduino UNO microcontroller & AD8232 ECG sensor</li>
+  <li><strong>Signal Quality:</strong> Noisy, baseline wander, and possible motion artifacts</li>
+  <li><strong>Filtering Applied:</strong> None (raw data)</li>
+  <li><strong>Purpose:</strong> Demonstrate the necessity of filtering and preprocessing in ECG analysis</li>
+  <li><strong>Use Case:</strong> Useful for testing signal processing algorithms and comparing with filtered outputs</li>
+</ul>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+   <!-- Back to home -->
+   <a href="{% url 'dashboard' %}" class="back-link">🏠 Back to Dashboard</a>
+
+  <footer>
+    &copy; 2025 ECGenius | Built by Team Data Titans
+  </footer>
+
+
+  <script>
+    window.addEventListener("load", () => {
+      document.querySelectorAll("video").forEach(video => {
+        video.muted = true;
+        video.play().catch(err => console.log("Autoplay failed:", err));
+      });
+    });
+  // Dark/Light Mode Toggle
+  const toggleButton = document.getElementById('mode-toggle');
+
+  // Check if dark mode is saved in local storage
+  if (localStorage.getItem('darkMode') === 'enabled') {
+    document.body.classList.add('dark-mode');
+  }
+
+  // Event listener for the dark mode toggle button
+  toggleButton.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    
+    // Save the current mode in localStorage
+    if (document.body.classList.contains('dark-mode')) {
+      localStorage.setItem('darkMode', 'enabled');
+    } else {
+      localStorage.setItem('darkMode', 'disabled');
+    }
+  });
+
+  </script>
+
+</body>
+</html>

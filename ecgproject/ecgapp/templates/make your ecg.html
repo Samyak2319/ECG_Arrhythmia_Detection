@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Make Your Own ECG System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* [Styles remain unchanged — keeping your neon-glass aesthetic] */
+    :root {
+      --neon-blue: #00f0ff;
+      --neon-pink: #ff4e8a;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --shadow-glow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-pink);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #e0f7fa;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      animation: fadeIn 1.2s ease;
+    }
+    h1 {
+      font-size: 2.7rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--neon-blue);
+      text-shadow: 0 0 10px var(--neon-blue);
+      animation: fadeInDown 1s ease-in-out;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      justify-items: center;
+      text-align: center;
+    }
+    .equipment {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+      transition: all 0.4s ease;
+      animation: fadeInUp 1s ease forwards;
+    }
+    .equipment:hover {
+      transform: scale(1.03) translateY(-5px);
+      box-shadow: var(--shadow-glow);
+    }
+    .equipment h2 {
+      color: #fff;
+      font-size: 1.5rem;
+      text-shadow: 0 0 5px var(--neon-pink);
+      margin-bottom: 0.8rem;
+    }
+    .equipment img {
+      width: 100%;
+      max-height: 600px;
+      object-fit: contain;
+      background-color: #000;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: all 0.4s ease;
+    }
+    .equipment img:hover {
+      transform: scale(1.05) rotate(1deg);
+      filter: brightness(1.1) drop-shadow(0 0 8px var(--neon-blue));
+    }
+    .equipment p, .equipment ul {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-align: left;
+      margin-left: 10px;
+    }
+    .magnifier {
+      position: relative;
+      display: inline-block;
+      cursor: zoom-in;
+    }
+    .zoom-lens {
+      position: absolute;
+      border: 3px solid #ff4e8a;
+      width: 180px;
+      height: 180px;
+      cursor: zoom-in;
+      visibility: hidden;
+      pointer-events: none;
+      background-repeat: no-repeat;
+      background-color: #000;
+      z-index: 10;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      font-weight: bold;
+      color: var(--neon-pink);
+      text-shadow: 0 0 8px var(--neon-pink);
+      text-decoration: none;
+      animation: fadeIn 1.5s ease;
+    }
+    a.back-link:hover { text-decoration: underline; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .equipment { padding: 15px; }
+      .equipment h2 { font-size: 1.2rem; }
+      .equipment p, .equipment ul { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Make Your Own ECG System</h1>
+
+  <div class="grid-container">
+    <div class="equipment">
+      <h2>ECG System Circuit Diagram</h2>
+      <div class="magnifier">
+        <img src="{% static 'images/Arduino-UNO_circuit.jpg' %}" alt="ECG Circuit Diagram">
+        <div class="zoom-lens"></div>
+      </div>
+      <p>This circuit diagram shows how to connect:</p>
+      <ul>
+        <li>AD8232 OUT (Analog) to Arduino Uno A0 pin</li>
+        <li>AD8232 GND to Arduino GND</li>
+        <li>AD8232 3.3V (or 3V) to Arduino 3.3V pin</li>
+        <li>LO+ and LO- can be left unconnected or monitored via digital pins</li>
+        <li>Electrodes: RA (Right Arm), LA (Left Arm), RL (Right Leg/Ground)</li>
+        <li>Upload Arduino code to read analog signal from pin A0 and print via Serial Monitor</li>
+      </ul>
+    </div>
+
+    <div class="equipment">
+      <h2>ECG System Device</h2>
+      <div class="magnifier">
+        <img src="{% static 'images/Arduino-UNO_circuit2.jpg' %}" alt="ECG Device">
+        <div class="zoom-lens"></div>
+      </div>
+      <p>This is the ECG system device that reads heart signals for processing.</p>
+    </div>
+  </div>
+
+  <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Dashboard</a>
+
+  <script>
+    document.querySelectorAll('.magnifier').forEach(magnify => {
+      const lens = magnify.querySelector('.zoom-lens');
+      const img = magnify.querySelector('img');
+
+      magnify.addEventListener('mousemove', function(e) {
+        const { left, top, width, height } = magnify.getBoundingClientRect();
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
+        lens.style.visibility = 'visible';
+        lens.style.left = (x - lens.offsetWidth / 2) + 'px';
+        lens.style.top = (y - lens.offsetHeight / 2) + 'px';
+
+        const zoomRatio = 2;
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        lens.style.backgroundImage = `url(${img.src})`;
+        lens.style.backgroundSize = `${imgWidth * zoomRatio}px ${imgHeight * zoomRatio}px`;
+        lens.style.backgroundPosition = `-${x * zoomRatio - lens.offsetWidth / 2}px -${y * zoomRatio - lens.offsetHeight / 2}px`;
+      });
+
+      magnify.addEventListener('mouseleave', function() {
+        lens.style.visibility = 'hidden';
+      });
+    });
+  </script>
+</body>
+</html>

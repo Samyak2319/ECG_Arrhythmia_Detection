@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensors & Equipment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Root color variables for neon theme */
+    :root {
+      --neon-blue: #00f0ff;
+      --neon-pink: #ff4e8a;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --shadow-glow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-pink);
+    }
+
+    /* Basic reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #e0f7fa;
+      padding: 2rem;
+      min-height: 100vh;
+      overflow-x: hidden;
+      animation: fadeIn 1.2s ease;
+    }
+
+    /* Page title */
+    h1 {
+      font-size: 2.7rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--neon-blue);
+      text-shadow: 0 0 10px var(--neon-blue);
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    /* Grid layout for equipment cards */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Equipment card style */
+    .equipment {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+      transition: all 0.4s ease;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .equipment:hover {
+      transform: scale(1.03) translateY(-5px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* Heading inside card */
+    .equipment h2 {
+      color: #fff;
+      font-size: 1.5rem;
+      text-shadow: 0 0 5px var(--neon-pink);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Image styling - larger and full view */
+    .equipment img {
+      width: 100%;
+      max-height: 350px;              /* Increased height for full picture */
+      object-fit: contain;            /* Full image display without cropping */
+      background-color: #000;         /* Helps distinguish image edge */
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: all 0.4s ease;
+    }
+
+    /* Image hover effects */
+    .equipment img:hover {
+      transform: scale(1.05) rotate(1deg);
+      filter: brightness(1.1) drop-shadow(0 0 8px var(--neon-blue));
+    }
+
+    /* Description text */
+    .equipment p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Back to home link */
+    a.back-link {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      font-weight: bold;
+      color: var(--neon-pink);
+      text-shadow: 0 0 8px var(--neon-pink);
+      text-decoration: none;
+      animation: fadeIn 1.5s ease;
+    }
+
+    a.back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .equipment { padding: 15px; }
+      .equipment h2 { font-size: 1.2rem; }
+      .equipment p { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Sensors & Equipment</h1>
+
+  <div class="grid-container">
+
+    <!-- AD8232 ECG Sensor -->
+    <div class="equipment">
+      <h2>AD8232 ECG Sensor</h2>
+      <img src="{% static 'images/ad8232_sensor.jpg' %}" alt="AD8232 Front">
+      <img src="{% static 'images/ad8232_sensor_back.jpg' %}" alt="AD8232 Back">
+      <p>
+        The AD8232 is a specialized analog front-end sensor used to capture ECG (electrocardiogram) signals. It provides:
+      </p>
+      <ul>
+        <li>High signal quality with low noise</li>
+        <li>Compact and low-power design</li>
+        <li>Perfect for wearable or portable heart monitoring</li>
+        <li>Captures electrical activity of the heart through electrodes</li>
+      </ul>
+    </div>
+
+    <!-- ESP32 Microcontroller -->
+    <div class="equipment">
+      <h2>ARDUINO-UNO Microcontroller</h2>
+      <img src="{% static 'images/Arduino-UNO.jpg' %}" alt="ESP32 Top View">
+      <img src="{% static 'images/Arduino-UNO-2.jpg' %}" alt="ESP32 Side View">
+      <p>
+        The Arduino Uno is a popular microcontroller board based on the ATmega328P. In this project:
+      </p>
+      <ul>
+        <li>It receives analog ECG data from the AD8232 sensor module</li>
+        <li>Processes and digitizes the signal using its onboard ADC (Analog-to-Digital Converter)</li>
+        <li>Sends the data to a computer or server via serial communication (USB) for further processing</li>
+      </ul>      
+    </div>
+
+    <!-- ECG Electrodes -->
+    <div class="equipment">
+      <h2>ECG Electrodes</h2>
+      <img src="{% static 'images/electrodes.jpg' %}" alt="Electrodes">
+      <img src="{% static 'images/electrodes_wire.jpg' %}" alt="Electrode Wires">
+      <p>
+        ECG electrodes are placed on the skin to detect the heart’s electrical signals. These are:
+      </p>
+      <ul>
+        <li>Disposable wet gel electrodes for better conductivity</li>
+        <li>Connected to AD8232 via color-coded leads</li>
+        <li>Essential for capturing clean signals from the body</li>
+      </ul>
+    </div>
+
+    <!-- Software Stack -->
+    <div class="equipment">
+        <h2>Software Architecture</h2>
+        <ul>
+          <li>
+            <strong>Django Backend</strong>
+            <ul>
+              <li>Real‑time ECG graph visualization using Python scripts</li>
+              <li>Interactive dashboard built with Django templates and CSS styling</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Deep Learning Models</strong>
+            <ul>
+              <li>CNN and BiLSTM architectures for anomaly detection with Attention Modules and Focal Loss</li>
+              <li>Designed to identify arrhythmias and other ECG irregularities</li>
+            </ul>
+          </li>
+        </ul>      
+    </div>
+
+  </div>
+
+  <!-- Back to home -->
+  <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Dashboard</a>
+
+</body>
+</html>
